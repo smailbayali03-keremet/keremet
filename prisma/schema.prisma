@@ -1,0 +1,21 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model Request {
+  id            Int      @id @default(autoincrement())
+  token         String   @unique
+  whatsappPhone String
+  name          String
+  cabinet       String
+  requestType   String
+  urgency       String
+  notes         String?
+  status        String   @default("pending")
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}

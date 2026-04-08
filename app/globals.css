@@ -1,0 +1,134 @@
+@import "tailwindcss";
+
+:root {
+  --gold: #C9A84C;
+  --gold-light: #E8D5A3;
+  --gold-dark: #A07830;
+  --cream: #FAFAF8;
+  --white: #FFFFFF;
+  --dark: #1A1A1A;
+  --gray: #6B6B6B;
+  --border: #E8E0D0;
+}
+
+@theme inline {
+  --color-gold: var(--gold);
+  --color-gold-light: var(--gold-light);
+  --color-cream: var(--cream);
+  --font-playfair: var(--font-playfair);
+  --font-inter: var(--font-inter);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  background: var(--cream);
+  color: var(--dark);
+  font-family: var(--font-inter), 'Inter', sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+.font-playfair {
+  font-family: var(--font-playfair), 'Playfair Display', serif;
+}
+
+/* Gold shimmer animation */
+@keyframes shimmer {
+  0% { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
+.gold-shimmer {
+  background: linear-gradient(90deg, #C9A84C, #E8D5A3, #C9A84C, #A07830, #C9A84C);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: shimmer 4s linear infinite;
+}
+
+/* Elegant card */
+.elite-card {
+  background: white;
+  border: 1px solid #E8E0D0;
+  border-radius: 16px;
+  box-shadow: 0 4px 24px rgba(201, 168, 76, 0.08), 0 1px 4px rgba(0,0,0,0.04);
+}
+
+/* Gold button */
+.btn-gold {
+  background: linear-gradient(135deg, #C9A84C, #A07830);
+  color: white;
+  border: none;
+  padding: 12px 32px;
+  border-radius: 8px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(201, 168, 76, 0.3);
+}
+
+.btn-gold:hover {
+  box-shadow: 0 6px 20px rgba(201, 168, 76, 0.45);
+  transform: translateY(-1px);
+}
+
+/* Input elegant */
+.input-elegant {
+  width: 100%;
+  padding: 12px 16px;
+  border: 1.5px solid #E8E0D0;
+  border-radius: 8px;
+  font-size: 15px;
+  color: #1A1A1A;
+  background: white;
+  transition: border-color 0.2s;
+  outline: none;
+}
+
+.input-elegant:focus {
+  border-color: #C9A84C;
+  box-shadow: 0 0 0 3px rgba(201, 168, 76, 0.1);
+}
+
+/* Status badges */
+.badge-pending {
+  background: #FEF9EC;
+  color: #B7821A;
+  border: 1px solid #F0D98A;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.badge-done {
+  background: #EEFAF3;
+  color: #1E7B4B;
+  border: 1px solid #A3E4C0;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.badge-notdone {
+  background: #FEF1F1;
+  color: #C0392B;
+  border: 1px solid #F5B7B1;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+/* Gold divider */
+.gold-divider {
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #C9A84C, transparent);
+  border: none;
+  margin: 0;
+}
