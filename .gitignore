@@ -45,3 +45,5 @@ next-env.d.ts
 /prisma/dev.db-journal
 /bot/.wwebjs_auth
 /public/qr.png
+
+.vercel
