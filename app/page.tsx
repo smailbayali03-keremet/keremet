@@ -135,7 +135,7 @@ export default function Home() {
           <div className="w-9 h-9 rounded-full flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #C9A84C, #A07830)' }}>
             <span className="text-white font-bold font-playfair">A</span>
           </div>
-          <span className="text-lg font-bold font-playfair text-[#1A1A1A]">Auzhan<span className="text-[#C9A84C]">.ktl</span></span>
+          <span className="text-lg font-bold font-playfair text-[#1A1A1A]">Auzhan<span className="text-[#C9A84C]">_ktl</span><span className="text-[#6B6B6B] font-normal">.Designer</span></span>
         </div>
         <nav className="flex items-center gap-8">
           {['Басты', 'Қызметтер', 'Байланыс'].map((item, i) => (
@@ -392,9 +392,9 @@ export default function Home() {
           <div className="w-8 h-8 rounded-full flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #C9A84C, #A07830)' }}>
             <span className="text-white font-bold text-sm font-playfair">A</span>
           </div>
-          <span className="font-bold font-playfair text-[#1A1A1A]">Auzhan<span className="text-[#C9A84C]">.ktl</span></span>
+          <span className="font-bold font-playfair text-[#1A1A1A]">Auzhan<span className="text-[#C9A84C]">_ktl</span><span className="text-[#6B6B6B] font-normal">.Designer</span></span>
         </div>
-        <p className="text-sm text-[#6B6B6B]">© 2024 Auzhan.ktl — Барлық құқықтар қорғалған</p>
+        <p className="text-sm text-[#6B6B6B]">© 2024 Auzhan_ktl.Designer</p>
         <div className="flex gap-6">
           <Link href="/admin" className="text-sm text-[#6B6B6B] hover:text-[#C9A84C] transition-colors">Админ</Link>
           <Link href="/executor" className="text-sm text-[#6B6B6B] hover:text-[#C9A84C] transition-colors">Орындаушы</Link>

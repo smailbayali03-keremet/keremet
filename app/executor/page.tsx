@@ -90,7 +90,7 @@ function Dashboard() {
   }, [fetchRequests])
 
   async function updateStatus(id: number, status: string) {
-    await fetch(`/api/requests/${id}`, {
+    await fetch(`/api/requests/update?id=${id}`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ status }),

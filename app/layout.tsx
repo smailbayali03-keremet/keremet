@@ -13,8 +13,8 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Auzhan.ktl — Автоматизация жұмыс",
-  description: "Мектеп автоматизация жүйесі",
+  title: "Auzhan_ktl.Designer",
+  description: "Auzhan_ktl.Designer — мектеп автоматизация жүйесі",
 };
 
 export default function RootLayout({

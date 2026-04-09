@@ -18,7 +18,8 @@ export async function POST(request: Request) {
   })
 
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'
-  const link = `${baseUrl}/form/${token}`
+  const link = `${baseUrl}/form?token=${token}`
 
   return Response.json({ token, link })
 }
+export const dynamic = 'force-static'

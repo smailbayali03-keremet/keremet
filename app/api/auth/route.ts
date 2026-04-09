@@ -32,3 +32,4 @@ export async function DELETE() {
   cookieStore.delete('role')
   return Response.json({ success: true })
 }
+export const dynamic = 'force-static'
