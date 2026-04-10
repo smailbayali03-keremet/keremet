@@ -1,6 +1,6 @@
 import { prisma } from '@/lib/prisma'
 
-export const dynamic = 'force-static'
+export const dynamic = 'force-dynamic'
 
 export async function POST(request: Request) {
   const url = new URL(request.url)
@@ -10,10 +10,10 @@ export async function POST(request: Request) {
     return Response.json({ error: 'Token жоқ' }, { status: 400 })
   }
 
-  const { name, cabinet, requestType, urgency, notes } = await request.json()
+  const { name, cabinet, requestType, topic, size, info, style, urgency, notes } = await request.json()
 
-  if (!name || !cabinet || !requestType || !urgency) {
-    return Response.json({ error: 'Барлық міндетті өрістерді толтырыңыз' }, { status: 400 })
+  if (!name || !requestType || !urgency) {
+    return Response.json({ error: 'Міндетті өрістерді толтырыңыз' }, { status: 400 })
   }
 
   const existing = await prisma.request.findUnique({ where: { token } })
@@ -23,7 +23,17 @@ export async function POST(request: Request) {
 
   const updated = await prisma.request.update({
     where: { token },
-    data: { name, cabinet, requestType, urgency, notes: notes || '' },
+    data: {
+      name,
+      cabinet: cabinet || '',
+      requestType,
+      topic: topic || '',
+      size: size || '',
+      info: info || '',
+      style: style || '',
+      urgency,
+      notes: notes || '',
+    },
   })
 
   return Response.json(updated)

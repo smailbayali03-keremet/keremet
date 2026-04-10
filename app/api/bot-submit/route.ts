@@ -22,4 +22,4 @@ export async function POST(request: Request) {
 
   return Response.json({ token, link })
 }
-export const dynamic = 'force-static'
+export const dynamic = 'force-dynamic'

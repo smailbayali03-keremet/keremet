@@ -1,8 +1,8 @@
 'use client'
 
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
-import { motion, useScroll, useTransform, useInView } from 'framer-motion'
+import { motion, useScroll, useTransform, useInView, AnimatePresence } from 'framer-motion'
 import GlitterText from './components/GlitterText'
 
 // Animated text that splits into words
@@ -92,7 +92,64 @@ function Marquee({ items }: { items: string[] }) {
   )
 }
 
+function ProModal({ onClose }: { onClose: () => void }) {
+  const [password, setPassword] = useState('')
+  const [error, setError] = useState('')
+
+  function handleSubmit(e: React.FormEvent) {
+    e.preventDefault()
+    if (password === 'LifeisOmir') {
+      window.location.href = '/admin'
+    } else {
+      setError('Пароль қате')
+      setPassword('')
+    }
+  }
+
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="fixed inset-0 z-[100] flex items-start justify-end pt-16 pr-4 md:pr-8"
+      onClick={onClose}
+    >
+      <motion.div
+        initial={{ opacity: 0, y: -10, scale: 0.95 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        exit={{ opacity: 0, y: -10, scale: 0.95 }}
+        transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
+        onClick={e => e.stopPropagation()}
+        className="bg-white rounded-2xl border border-[#E8E0D0] p-5 w-72 shadow-2xl"
+        style={{ boxShadow: '0 20px 60px rgba(0,0,0,0.12), 0 4px 16px rgba(201,168,76,0.1)' }}
+      >
+        <div className="flex items-center gap-2 mb-4">
+          <div className="w-6 h-6 rounded-full flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #C9A84C, #A07830)' }}>
+            <span className="text-white text-xs font-bold">A</span>
+          </div>
+          <span className="text-sm font-semibold text-[#1A1A1A] font-playfair">Дизайнер панелі</span>
+        </div>
+        <form onSubmit={handleSubmit} className="space-y-3">
+          <input
+            autoFocus
+            type="password"
+            className="input-elegant text-sm"
+            placeholder="Пароль"
+            value={password}
+            onChange={e => { setPassword(e.target.value); setError('') }}
+          />
+          {error && <p className="text-xs text-red-500">{error}</p>}
+          <button type="submit" className="w-full py-2.5 rounded-xl text-white text-sm font-semibold transition-all hover:opacity-90" style={{ background: 'linear-gradient(135deg, #C9A84C, #A07830)' }}>
+            Кіру
+          </button>
+        </form>
+      </motion.div>
+    </motion.div>
+  )
+}
+
 export default function Home() {
+  const [showProModal, setShowProModal] = useState(false)
   const containerRef = useRef<HTMLDivElement>(null)
   const heroRef = useRef<HTMLDivElement>(null)
   const { scrollYProgress } = useScroll({ target: heroRef, offset: ['start start', 'end start'] })
@@ -137,28 +194,36 @@ export default function Home() {
           </div>
           <span className="text-lg font-bold font-playfair text-[#1A1A1A]">Auzhan<span className="text-[#C9A84C]">_ktl</span><span className="text-[#6B6B6B] font-normal">.Designer</span></span>
         </div>
-        <nav className="flex items-center gap-8">
-          {['Басты', 'Қызметтер', 'Байланыс'].map((item, i) => (
-            <motion.span
-              key={item}
+        <nav className="flex items-center gap-4 md:gap-8">
+          {[
+            { label: 'Қызметтер', href: '/services' },
+            { label: 'Тапсырыс', href: '/form' },
+          ].map((item, i) => (
+            <motion.a
+              key={item.label}
+              href={item.href}
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3 + i * 0.1, duration: 0.5 }}
-              className="text-sm font-medium text-[#6B6B6B] hover:text-[#C9A84C] transition-colors cursor-pointer"
+              className="hidden md:block text-sm font-medium text-[#6B6B6B] hover:text-[#C9A84C] transition-colors cursor-pointer"
             >
-              {item}
-            </motion.span>
+              {item.label}
+            </motion.a>
           ))}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
+          <motion.button
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
             transition={{ delay: 0.6, duration: 0.5 }}
+            onClick={() => setShowProModal(true)}
+            className="text-xs font-medium text-[#B0A090] hover:text-[#C9A84C] transition-colors cursor-pointer tracking-wider"
           >
-            <Link href="/admin" className="text-sm font-semibold text-white px-5 py-2.5 rounded-full transition-all hover:shadow-lg hover:scale-105" style={{ background: 'linear-gradient(135deg, #C9A84C, #A07830)' }}>
-              Кіру
-            </Link>
-          </motion.div>
+            Pro
+          </motion.button>
         </nav>
+
+        <AnimatePresence>
+          {showProModal && <ProModal onClose={() => setShowProModal(false)} />}
+        </AnimatePresence>
       </motion.header>
 
       {/* HERO */}
@@ -190,8 +255,8 @@ export default function Home() {
             animate={{ y: 0, opacity: 1 }}
             transition={{ duration: 0.8, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
           >
-            <span className="font-bold font-playfair text-[#1A1A1A] text-5xl md:text-6xl">Auzhan</span>
-            <GlitterText text=".ktl" className="text-5xl md:text-6xl" />
+            <span className="font-bold font-playfair text-[#1A1A1A] text-4xl md:text-6xl">Auzhan</span>
+            <GlitterText text=".ktl" className="text-4xl md:text-6xl" />
           </motion.h1>
 
           {/* Gold animated underline */}
@@ -217,18 +282,18 @@ export default function Home() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.8 }}
-            className="flex items-center justify-center gap-4"
+            className="flex flex-col sm:flex-row items-center justify-center gap-3"
           >
             <Link
               href="/admin"
-              className="px-8 py-4 rounded-full text-white font-semibold text-sm tracking-wide transition-all hover:shadow-xl hover:scale-105"
+              className="w-full sm:w-auto px-8 py-4 rounded-full text-white font-semibold text-sm tracking-wide transition-all hover:shadow-xl hover:scale-105 text-center"
               style={{ background: 'linear-gradient(135deg, #C9A84C, #A07830)' }}
             >
               Кіру →
             </Link>
             <Link
               href="/executor"
-              className="px-8 py-4 rounded-full font-semibold text-sm tracking-wide border-2 border-[#E8E0D0] text-[#1A1A1A] hover:border-[#C9A84C] hover:text-[#C9A84C] transition-all"
+              className="w-full sm:w-auto px-8 py-4 rounded-full font-semibold text-sm tracking-wide border-2 border-[#E8E0D0] text-[#1A1A1A] hover:border-[#C9A84C] hover:text-[#C9A84C] transition-all text-center"
             >
               Орындаушы
             </Link>
@@ -255,11 +320,11 @@ export default function Home() {
       <Marquee items={marqueeItems} />
 
       {/* HOW IT WORKS */}
-      <section className="py-32 px-6 max-w-6xl mx-auto">
+      <section className="py-16 md:py-32 px-6 max-w-6xl mx-auto">
         <FadeCard>
-          <div className="text-center mb-20">
+          <div className="text-center mb-12 md:mb-20">
             <span className="text-xs font-semibold tracking-widest uppercase text-[#C9A84C] mb-4 block">Жүйе қалай жұмыс істейді</span>
-            <h2 className="text-5xl md:text-7xl font-bold font-playfair text-[#1A1A1A] leading-tight">
+            <h2 className="text-4xl md:text-7xl font-bold font-playfair text-[#1A1A1A] leading-tight">
               3 қадам
             </h2>
           </div>
@@ -302,25 +367,25 @@ export default function Home() {
       </section>
 
       {/* BIG STATS */}
-      <section className="py-24 px-6" style={{ background: 'linear-gradient(135deg, #1A1A1A 0%, #2D2D2D 100%)' }}>
+      <section className="py-16 md:py-24 px-6" style={{ background: 'linear-gradient(135deg, #1A1A1A 0%, #2D2D2D 100%)' }}>
         <div className="max-w-6xl mx-auto">
           <FadeCard>
-            <div className="text-center mb-16">
-              <h2 className="text-5xl md:text-6xl font-bold font-playfair text-white">
+            <div className="text-center mb-10 md:mb-16">
+              <h2 className="text-3xl md:text-6xl font-bold font-playfair text-white">
                 Нәтижелер <span className="gold-shimmer">сөйлейді</span>
               </h2>
             </div>
           </FadeCard>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-1">
+          <div className="grid grid-cols-3 gap-3 md:gap-1">
             {[
               { value: '100%', label: 'Цифрлық процесс' },
               { value: '1-2h', label: 'Жедел орындау' },
               { value: '24/7', label: 'Өтініш қабылдау' },
             ].map((stat, i) => (
               <FadeCard key={stat.label} delay={i * 0.15}>
-                <div className="text-center py-12 px-6 border border-white/10 rounded-2xl hover:border-[#C9A84C]/40 transition-colors">
-                  <div className="text-6xl md:text-8xl font-bold font-playfair mb-3" style={{ color: '#C9A84C' }}>{stat.value}</div>
-                  <div className="text-white/60 text-sm tracking-widest uppercase">{stat.label}</div>
+                <div className="text-center py-8 md:py-12 px-2 md:px-6 border border-white/10 rounded-2xl hover:border-[#C9A84C]/40 transition-colors">
+                  <div className="text-3xl md:text-8xl font-bold font-playfair mb-2 md:mb-3" style={{ color: '#C9A84C' }}>{stat.value}</div>
+                  <div className="text-white/60 text-xs md:text-sm tracking-widest uppercase">{stat.label}</div>
                 </div>
               </FadeCard>
             ))}
@@ -329,11 +394,11 @@ export default function Home() {
       </section>
 
       {/* FEATURES */}
-      <section className="py-32 px-6 max-w-6xl mx-auto">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+      <section className="py-16 md:py-32 px-6 max-w-6xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-center">
           <FadeCard>
             <span className="text-xs font-semibold tracking-widest uppercase text-[#C9A84C] mb-4 block">Артықшылықтары</span>
-            <h2 className="text-5xl font-bold font-playfair text-[#1A1A1A] leading-tight mb-6">
+            <h2 className="text-3xl md:text-5xl font-bold font-playfair text-[#1A1A1A] leading-tight mb-6">
               Неге дәл<br /><span className="gold-shimmer">Auzhan.ktl?</span>
             </h2>
             <p className="text-[#6B6B6B] leading-relaxed text-lg">
@@ -364,20 +429,20 @@ export default function Home() {
       </section>
 
       {/* CTA */}
-      <section className="py-32 px-6">
+      <section className="py-16 md:py-32 px-6">
         <FadeCard>
-          <div className="max-w-3xl mx-auto text-center rounded-3xl p-16 relative overflow-hidden" style={{ background: 'linear-gradient(135deg, #1A1A1A, #2D2D2D)' }}>
+          <div className="max-w-3xl mx-auto text-center rounded-3xl p-8 md:p-16 relative overflow-hidden" style={{ background: 'linear-gradient(135deg, #1A1A1A, #2D2D2D)' }}>
             <div className="absolute inset-0" style={{ background: 'radial-gradient(circle at 50% 50%, rgba(201,168,76,0.15) 0%, transparent 70%)' }} />
             <div className="relative z-10">
-              <h2 className="text-4xl md:text-6xl font-bold font-playfair text-white mb-6 leading-tight">
+              <h2 className="text-3xl md:text-6xl font-bold font-playfair text-white mb-4 md:mb-6 leading-tight">
                 Бастауға<br /><span className="gold-shimmer">дайынсыз ба?</span>
               </h2>
-              <p className="text-white/60 text-lg mb-10">Мектебіңіздің жұмысын автоматтандыруды бүгін бастаңыз</p>
-              <div className="flex items-center justify-center gap-4">
-                <Link href="/admin" className="px-10 py-4 rounded-full text-[#1A1A1A] font-bold text-sm tracking-wide transition-all hover:shadow-2xl hover:scale-105" style={{ background: 'linear-gradient(135deg, #C9A84C, #E8D5A3)' }}>
+              <p className="text-white/60 text-base md:text-lg mb-8 md:mb-10">Мектебіңіздің жұмысын автоматтандыруды бүгін бастаңыз</p>
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+                <Link href="/admin" className="w-full sm:w-auto px-8 md:px-10 py-4 rounded-full text-[#1A1A1A] font-bold text-sm tracking-wide transition-all hover:shadow-2xl hover:scale-105 text-center" style={{ background: 'linear-gradient(135deg, #C9A84C, #E8D5A3)' }}>
                   Админ панель →
                 </Link>
-                <Link href="/executor" className="px-10 py-4 rounded-full text-white font-semibold text-sm tracking-wide border border-white/20 hover:border-[#C9A84C] transition-all">
+                <Link href="/executor" className="w-full sm:w-auto px-8 md:px-10 py-4 rounded-full text-white font-semibold text-sm tracking-wide border border-white/20 hover:border-[#C9A84C] transition-all text-center">
                   Орындаушы
                 </Link>
               </div>

@@ -13,4 +13,4 @@ export async function GET() {
 
   return Response.json(requests)
 }
-export const dynamic = 'force-static'
+export const dynamic = 'force-dynamic'

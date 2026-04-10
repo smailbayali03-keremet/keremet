@@ -13,6 +13,10 @@ model Request {
   name          String
   cabinet       String
   requestType   String
+  topic         String?
+  size          String?
+  info          String?
+  style         String?
   urgency       String
   notes         String?
   status        String   @default("pending")
