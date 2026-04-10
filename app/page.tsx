@@ -5,466 +5,385 @@ import Link from 'next/link'
 import { motion, useScroll, useTransform, useInView, AnimatePresence } from 'framer-motion'
 import GlitterText from './components/GlitterText'
 
-// Animated text that splits into words
-function AnimatedText({ text, className, delay = 0 }: { text: string; className?: string; delay?: number }) {
-  const ref = useRef(null)
-  const isInView = useInView(ref, { once: true, margin: '-10% 0px' })
-  const words = text.split(' ')
-
-  return (
-    <span ref={ref} className={className} style={{ display: 'inline-block' }}>
-      {words.map((word, i) => (
-        <span key={i} style={{ overflow: 'hidden', display: 'inline-block', marginRight: '0.25em' }}>
-          <motion.span
-            style={{ display: 'inline-block' }}
-            initial={{ y: '110%', opacity: 0 }}
-            animate={isInView ? { y: 0, opacity: 1 } : {}}
-            transition={{
-              duration: 0.7,
-              ease: [0.16, 1, 0.3, 1],
-              delay: delay + i * 0.08,
-            }}
-          >
-            {word}
-          </motion.span>
-        </span>
-      ))}
-    </span>
-  )
-}
-
-// Character by character animation for hero
-function HeroTitle({ text, className, delay = 0, gold = false }: { text: string; className?: string; delay?: number; gold?: boolean }) {
-  const chars = text.split('')
-  return (
-    <span className={className} style={{ display: 'inline-flex', overflow: 'hidden' }}>
-      {chars.map((char, i) => (
-        <motion.span
-          key={i}
-          style={{ display: 'inline-block', whiteSpace: 'pre' }}
-          initial={{ y: '100%', opacity: 0, rotateX: -90 }}
-          animate={{ y: 0, opacity: 1, rotateX: 0 }}
-          transition={{
-            duration: 0.6,
-            ease: [0.16, 1, 0.3, 1],
-            delay: delay + i * 0.045,
-          }}
-        >
-          {char}
-        </motion.span>
-      ))}
-    </span>
-  )
-}
-
-// Fade up card
-function FadeCard({ children, delay = 0 }: { children: React.ReactNode; delay?: number }) {
-  const ref = useRef(null)
-  const isInView = useInView(ref, { once: true, margin: '-5% 0px' })
-  return (
-    <motion.div
-      ref={ref}
-      initial={{ opacity: 0, y: 60 }}
-      animate={isInView ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1], delay }}
-    >
-      {children}
-    </motion.div>
-  )
-}
-
-// Horizontal marquee
-function Marquee({ items }: { items: string[] }) {
-  return (
-    <div className="overflow-hidden py-5 border-y border-[#E8E0D0]" style={{ background: 'white' }}>
-      <motion.div
-        style={{ display: 'flex', gap: '3rem', whiteSpace: 'nowrap' }}
-        animate={{ x: ['0%', '-50%'] }}
-        transition={{ duration: 18, ease: 'linear', repeat: Infinity }}
-      >
-        {[...items, ...items].map((item, i) => (
-          <span key={i} className="text-sm font-semibold tracking-widest uppercase text-[#C9A84C] flex items-center gap-3">
-            {item} <span className="text-[#E8E0D0]">✦</span>
-          </span>
-        ))}
-      </motion.div>
-    </div>
-  )
-}
-
+/* ─── PRO MODAL ─────────────────────────────────────────── */
 function ProModal({ onClose }: { onClose: () => void }) {
-  const [password, setPassword] = useState('')
-  const [error, setError] = useState('')
-
-  function handleSubmit(e: React.FormEvent) {
+  const [pw, setPw] = useState('')
+  const [err, setErr] = useState('')
+  function submit(e: React.FormEvent) {
     e.preventDefault()
-    if (password === 'LifeisOmir') {
-      window.location.href = '/admin'
-    } else {
-      setError('Пароль қате')
-      setPassword('')
-    }
+    if (pw === 'LifeisOmir') { window.location.href = '/admin' }
+    else { setErr('Пароль қате'); setPw('') }
   }
-
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      className="fixed inset-0 z-[100] flex items-start justify-end pt-16 pr-4 md:pr-8"
-      onClick={onClose}
-    >
-      <motion.div
-        initial={{ opacity: 0, y: -10, scale: 0.95 }}
-        animate={{ opacity: 1, y: 0, scale: 1 }}
-        exit={{ opacity: 0, y: -10, scale: 0.95 }}
-        transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
-        onClick={e => e.stopPropagation()}
-        className="bg-white rounded-2xl border border-[#E8E0D0] p-5 w-72 shadow-2xl"
-        style={{ boxShadow: '0 20px 60px rgba(0,0,0,0.12), 0 4px 16px rgba(201,168,76,0.1)' }}
-      >
-        <div className="flex items-center gap-2 mb-4">
-          <div className="w-6 h-6 rounded-full flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #C9A84C, #A07830)' }}>
-            <span className="text-white text-xs font-bold">A</span>
-          </div>
-          <span className="text-sm font-semibold text-[#1A1A1A] font-playfair">Дизайнер панелі</span>
-        </div>
-        <form onSubmit={handleSubmit} className="space-y-3">
-          <input
-            autoFocus
-            type="password"
-            className="input-elegant text-sm"
-            placeholder="Пароль"
-            value={password}
-            onChange={e => { setPassword(e.target.value); setError('') }}
-          />
-          {error && <p className="text-xs text-red-500">{error}</p>}
-          <button type="submit" className="w-full py-2.5 rounded-xl text-white text-sm font-semibold transition-all hover:opacity-90" style={{ background: 'linear-gradient(135deg, #C9A84C, #A07830)' }}>
-            Кіру
-          </button>
-        </form>
-      </motion.div>
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+      className="fixed inset-0 z-[200]" onClick={onClose}>
+      <div className="absolute top-16 right-4 md:right-8" onClick={e => e.stopPropagation()}>
+        <motion.div initial={{ opacity: 0, y: -8, scale: 0.96 }} animate={{ opacity: 1, y: 0, scale: 1 }}
+          exit={{ opacity: 0, y: -8, scale: 0.96 }} transition={{ duration: 0.18 }}
+          className="bg-white/95 backdrop-blur-xl rounded-2xl border border-[#E8E0D0] p-5 w-68 shadow-2xl"
+          style={{ boxShadow: '0 25px 60px rgba(0,0,0,0.15)' }}>
+          <p className="text-xs font-semibold text-[#6B6B6B] mb-3 tracking-widest uppercase">Дизайнер панелі</p>
+          <form onSubmit={submit} className="space-y-3">
+            <input autoFocus type="password" className="input-elegant text-sm" placeholder="Пароль"
+              value={pw} onChange={e => { setPw(e.target.value); setErr('') }} />
+            {err && <p className="text-xs text-red-500">{err}</p>}
+            <button type="submit" className="w-full py-2.5 rounded-xl text-white text-sm font-semibold"
+              style={{ background: 'linear-gradient(135deg, #C9A84C, #A07830)' }}>Кіру</button>
+          </form>
+        </motion.div>
+      </div>
     </motion.div>
   )
 }
 
-export default function Home() {
-  const [showProModal, setShowProModal] = useState(false)
-  const containerRef = useRef<HTMLDivElement>(null)
-  const heroRef = useRef<HTMLDivElement>(null)
-  const { scrollYProgress } = useScroll({ target: heroRef, offset: ['start start', 'end start'] })
-  const heroY = useTransform(scrollYProgress, [0, 1], ['0%', '30%'])
-  const heroOpacity = useTransform(scrollYProgress, [0, 0.8], [1, 0])
+/* ─── LOADER ─────────────────────────────────────────────── */
+function Loader({ onDone }: { onDone: () => void }) {
+  const [pct, setPct] = useState(0)
+  useEffect(() => {
+    let v = 0
+    const id = setInterval(() => {
+      v += Math.random() * 18 + 4
+      if (v >= 100) { setPct(100); clearInterval(id); setTimeout(onDone, 400) }
+      else setPct(Math.floor(v))
+    }, 60)
+    return () => clearInterval(id)
+  }, [onDone])
+  return (
+    <motion.div exit={{ opacity: 0 }} transition={{ duration: 0.6 }}
+      className="fixed inset-0 z-[300] flex flex-col items-center justify-center"
+      style={{ background: '#0A0A0A' }}>
+      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
+        className="text-center mb-12">
+        <span className="text-2xl font-bold font-playfair text-white">
+          Auzhan<span style={{ color: '#C9A84C' }}>_ktl</span>
+          <span className="text-white/40 font-normal">.Designer</span>
+        </span>
+      </motion.div>
+      <div className="relative">
+        <span className="text-6xl font-bold font-playfair" style={{ color: '#C9A84C' }}>{pct}</span>
+        <span className="text-2xl font-bold text-white/40 ml-1">%</span>
+      </div>
+      <div className="w-48 h-px mt-8 overflow-hidden" style={{ background: 'rgba(255,255,255,0.1)' }}>
+        <motion.div className="h-full" style={{ background: '#C9A84C', width: `${pct}%`, transition: 'width 0.1s' }} />
+      </div>
+    </motion.div>
+  )
+}
 
-  // Lenis smooth scroll
+/* ─── NAV ────────────────────────────────────────────────── */
+function Nav({ onPro }: { onPro: () => void }) {
+  const [scrolled, setScrolled] = useState(false)
+  useEffect(() => {
+    const fn = () => setScrolled(window.scrollY > 60)
+    window.addEventListener('scroll', fn)
+    return () => window.removeEventListener('scroll', fn)
+  }, [])
+  return (
+    <motion.header initial={{ y: -80, opacity: 0 }} animate={{ y: 0, opacity: 1 }}
+      transition={{ duration: 0.8, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
+      className="fixed top-0 left-0 right-0 z-50 px-4 md:px-10 py-4 md:py-5 flex items-center justify-between transition-all duration-500"
+      style={{ background: scrolled ? 'rgba(10,10,10,0.92)' : 'transparent', backdropFilter: scrolled ? 'blur(20px)' : 'none', borderBottom: scrolled ? '1px solid rgba(255,255,255,0.06)' : 'none' }}>
+      <Link href="/" className="flex items-center gap-2.5">
+        <div className="w-8 h-8 rounded-full flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #C9A84C, #A07830)' }}>
+          <span className="text-white font-bold font-playfair text-sm">A</span>
+        </div>
+        <span className="text-base font-bold font-playfair text-white">
+          Auzhan<span style={{ color: '#C9A84C' }}>_ktl</span>
+          <span className="text-white/50 font-normal">.Designer</span>
+        </span>
+      </Link>
+      <nav className="flex items-center gap-6 md:gap-8">
+        {[{ label: 'Қызметтер', href: '/services' }, { label: 'Тапсырыс', href: '/form' }].map(item => (
+          <Link key={item.label} href={item.href}
+            className="hidden md:block text-sm font-medium text-white/60 hover:text-white transition-colors">
+            {item.label}
+          </Link>
+        ))}
+        <Link href="/services"
+          className="md:hidden text-sm font-medium text-white/60 hover:text-white transition-colors">
+          Тапсырыс
+        </Link>
+        <button onClick={onPro} className="text-[10px] font-medium text-white/20 hover:text-white/50 transition-colors tracking-widest uppercase">
+          Pro
+        </button>
+      </nav>
+    </motion.header>
+  )
+}
+
+/* ─── HORIZONTAL SCROLL SERVICES ────────────────────────── */
+const SERVICES = [
+  { title: 'Афиша', sub: 'Іс-шара', icon: '🎭', color: 'from-amber-950 to-stone-900' },
+  { title: 'Пост', sub: 'Әлеум. желі', icon: '📱', color: 'from-zinc-900 to-neutral-950' },
+  { title: 'Буклет', sub: 'Ақпарат', icon: '📖', color: 'from-stone-900 to-amber-950' },
+  { title: 'Грамота', sub: 'Марапат', icon: '🏆', color: 'from-neutral-900 to-zinc-950' },
+  { title: 'Баннер', sub: 'Стенд', icon: '🖼️', color: 'from-amber-950 to-neutral-900' },
+  { title: 'Сертификат', sub: 'Растама', icon: '📜', color: 'from-zinc-950 to-stone-900' },
+]
+
+/* ─── MAIN ───────────────────────────────────────────────── */
+export default function Home() {
+  const [loaded, setLoaded] = useState(false)
+  const [showPro, setShowPro] = useState(false)
+  const heroRef = useRef<HTMLDivElement>(null)
+  const servRef = useRef<HTMLDivElement>(null)
+  const { scrollYProgress } = useScroll({ target: heroRef, offset: ['start start', 'end start'] })
+  const heroY = useTransform(scrollYProgress, [0, 1], ['0%', '25%'])
+  const heroOpacity = useTransform(scrollYProgress, [0, 0.7], [1, 0])
+  const isServInView = useInView(servRef, { once: true, margin: '-10% 0px' })
+
   useEffect(() => {
     let lenis: any
+    if (!loaded) return
     import('lenis').then(({ default: Lenis }) => {
-      lenis = new Lenis({ lerp: 0.08, smoothWheel: true })
-      function raf(time: number) {
-        lenis.raf(time)
-        requestAnimationFrame(raf)
-      }
+      lenis = new Lenis({ lerp: 0.075, smoothWheel: true })
+      const raf = (t: number) => { lenis.raf(t); requestAnimationFrame(raf) }
       requestAnimationFrame(raf)
     })
     return () => lenis?.destroy()
-  }, [])
-
-  const marqueeItems = [
-    'WhatsApp автоматизация',
-    'Элитный дизайн',
-    'Жедел орындау',
-    'Мектеп жүйесі',
-    'Цифрлық шешім',
-  ]
+  }, [loaded])
 
   return (
-    <div ref={containerRef} style={{ background: '#FAFAF8' }}>
-      {/* NAV */}
-      <motion.header
-        initial={{ y: -80, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-        className="fixed top-0 left-0 right-0 z-50 px-8 py-5 flex items-center justify-between"
-        style={{ background: 'rgba(250,250,248,0.85)', backdropFilter: 'blur(16px)', borderBottom: '1px solid rgba(232,224,208,0.6)' }}
-      >
-        <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-full flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #C9A84C, #A07830)' }}>
-            <span className="text-white font-bold font-playfair">A</span>
-          </div>
-          <span className="text-lg font-bold font-playfair text-[#1A1A1A]">Auzhan<span className="text-[#C9A84C]">_ktl</span><span className="text-[#6B6B6B] font-normal">.Designer</span></span>
-        </div>
-        <nav className="flex items-center gap-4 md:gap-8">
-          {[
-            { label: 'Қызметтер', href: '/services' },
-            { label: 'Тапсырыс', href: '/form' },
-          ].map((item, i) => (
-            <motion.a
-              key={item.label}
-              href={item.href}
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3 + i * 0.1, duration: 0.5 }}
-              className="hidden md:block text-sm font-medium text-[#6B6B6B] hover:text-[#C9A84C] transition-colors cursor-pointer"
-            >
-              {item.label}
-            </motion.a>
-          ))}
-          <motion.button
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.6, duration: 0.5 }}
-            onClick={() => setShowProModal(true)}
-            className="text-xs font-medium text-[#B0A090] hover:text-[#C9A84C] transition-colors cursor-pointer tracking-wider"
-          >
-            Pro
-          </motion.button>
-        </nav>
+    <div style={{ background: '#0A0A0A', color: 'white' }}>
+      <AnimatePresence>{!loaded && <Loader onDone={() => setLoaded(true)} />}</AnimatePresence>
+      <AnimatePresence>{showPro && <ProModal onClose={() => setShowPro(false)} />}</AnimatePresence>
 
-        <AnimatePresence>
-          {showProModal && <ProModal onClose={() => setShowProModal(false)} />}
-        </AnimatePresence>
-      </motion.header>
+      <Nav onPro={() => setShowPro(true)} />
 
-      {/* HERO */}
-      <section ref={heroRef} className="min-h-screen flex flex-col items-center justify-center relative overflow-hidden pt-20">
-        {/* BG circles */}
-        <motion.div
-          style={{ y: heroY }}
-          className="absolute inset-0 flex items-center justify-center pointer-events-none"
-        >
-          <div className="w-[700px] h-[700px] rounded-full absolute" style={{ background: 'radial-gradient(circle, rgba(201,168,76,0.08) 0%, transparent 70%)' }} />
-        </motion.div>
+      {/* ── HERO ── */}
+      <section ref={heroRef} className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden">
+        {/* BG gradient */}
+        <div className="absolute inset-0" style={{ background: 'radial-gradient(ellipse 80% 60% at 50% 40%, rgba(201,168,76,0.07) 0%, transparent 70%)' }} />
 
-        <motion.div style={{ y: heroY, opacity: heroOpacity }} className="text-center px-6 relative z-10 max-w-5xl">
-          {/* Label */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-[#E8E0D0] bg-white mb-10 text-xs font-semibold tracking-widest uppercase text-[#C9A84C]"
-          >
+        <motion.div style={{ y: heroY, opacity: heroOpacity }} className="relative z-10 text-center px-6 max-w-6xl mx-auto w-full">
+          {/* Badge */}
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={loaded ? { opacity: 1, y: 0 } : {}}
+            transition={{ delay: 0.1, duration: 0.6 }}
+            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full mb-10 text-xs font-semibold tracking-widest uppercase"
+            style={{ border: '1px solid rgba(201,168,76,0.3)', background: 'rgba(201,168,76,0.06)', color: '#C9A84C' }}>
             <span className="w-1.5 h-1.5 rounded-full bg-[#C9A84C] animate-pulse" />
-            Мектеп автоматизация жүйесі
+            Мектеп дизайн автоматизациясы
           </motion.div>
 
-          {/* Main heading */}
-          <motion.h1
-            className="flex items-center justify-center gap-0 leading-none mb-4 tracking-tight"
-            initial={{ y: 60, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ duration: 0.8, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
-          >
-            <span className="font-bold font-playfair text-[#1A1A1A] text-4xl md:text-6xl">Auzhan</span>
-            <GlitterText text=".ktl" className="text-4xl md:text-6xl" />
-          </motion.h1>
-
-          {/* Gold animated underline */}
-          <motion.div
-            initial={{ scaleX: 0, opacity: 0 }}
-            animate={{ scaleX: 1, opacity: 1 }}
-            transition={{ duration: 1.2, delay: 0.9, ease: [0.16, 1, 0.3, 1] }}
-            style={{ height: 2, background: 'linear-gradient(90deg, transparent, #C9A84C, #E8D5A3, #C9A84C, transparent)', transformOrigin: 'center', maxWidth: 260, margin: '0 auto 2rem' }}
-          />
-
-          <div className="overflow-hidden mb-12">
-            <motion.p
-              initial={{ y: 40, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              transition={{ duration: 0.8, delay: 0.6, ease: [0.16, 1, 0.3, 1] }}
-              className="text-lg md:text-xl text-[#6B6B6B] max-w-xl mx-auto leading-relaxed"
-            >
-              WhatsApp арқылы өтініш — бот сілтеме жібереді — дизайнер орындайды — директорға отчет
-            </motion.p>
+          {/* Big heading */}
+          <div className="overflow-hidden mb-2">
+            <motion.h1 initial={{ y: '100%' }} animate={loaded ? { y: 0 } : {}}
+              transition={{ delay: 0.2, duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
+              className="text-[clamp(3.5rem,12vw,9rem)] font-bold font-playfair leading-none tracking-tight text-white">
+              Auzhan
+            </motion.h1>
+          </div>
+          <div className="overflow-hidden mb-8">
+            <motion.div initial={{ y: '100%' }} animate={loaded ? { y: 0 } : {}}
+              transition={{ delay: 0.32, duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
+              className="text-[clamp(3.5rem,12vw,9rem)] font-bold font-playfair leading-none tracking-tight flex items-center justify-center">
+              <GlitterText text=".ktl" className="text-[clamp(3.5rem,12vw,9rem)]" />
+            </motion.div>
           </div>
 
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.8 }}
-            className="flex flex-col sm:flex-row items-center justify-center gap-3"
-          >
-            <Link
-              href="/admin"
-              className="w-full sm:w-auto px-8 py-4 rounded-full text-white font-semibold text-sm tracking-wide transition-all hover:shadow-xl hover:scale-105 text-center"
-              style={{ background: 'linear-gradient(135deg, #C9A84C, #A07830)' }}
-            >
-              Кіру →
+          {/* Subtitle */}
+          <motion.p initial={{ opacity: 0, y: 30 }} animate={loaded ? { opacity: 1, y: 0 } : {}}
+            transition={{ delay: 0.55, duration: 0.8 }}
+            className="text-base md:text-xl text-white/40 max-w-md mx-auto mb-12 leading-relaxed">
+            WhatsApp арқылы өтініш — форма — дизайнер орындайды
+          </motion.p>
+
+          {/* CTA */}
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={loaded ? { opacity: 1, y: 0 } : {}}
+            transition={{ delay: 0.7, duration: 0.6 }}
+            className="flex flex-col sm:flex-row items-center justify-center gap-4">
+            <Link href="/services"
+              className="group relative px-10 py-4 rounded-full font-bold text-sm tracking-widest overflow-hidden"
+              style={{ background: 'linear-gradient(135deg, #C9A84C, #A07830)', color: '#0A0A0A' }}>
+              <span className="relative z-10">Тапсырыс беру →</span>
+              <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                style={{ background: 'linear-gradient(135deg, #E8D5A3, #C9A84C)' }} />
             </Link>
-            <Link
-              href="/executor"
-              className="w-full sm:w-auto px-8 py-4 rounded-full font-semibold text-sm tracking-wide border-2 border-[#E8E0D0] text-[#1A1A1A] hover:border-[#C9A84C] hover:text-[#C9A84C] transition-all text-center"
-            >
-              Орындаушы
+            <Link href="/services"
+              className="px-10 py-4 rounded-full font-semibold text-sm tracking-wide text-white/60 hover:text-white transition-colors"
+              style={{ border: '1px solid rgba(255,255,255,0.12)' }}>
+              Қызметтерді көру
             </Link>
           </motion.div>
         </motion.div>
 
         {/* Scroll indicator */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 1.5, duration: 1 }}
-          className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2"
-        >
-          <span className="text-xs tracking-widest uppercase text-[#6B6B6B]">Scroll</span>
-          <motion.div
-            animate={{ y: [0, 10, 0] }}
-            transition={{ repeat: Infinity, duration: 1.5, ease: 'easeInOut' }}
-            className="w-0.5 h-10 bg-gradient-to-b from-[#C9A84C] to-transparent rounded-full"
-          />
+        <motion.div initial={{ opacity: 0 }} animate={loaded ? { opacity: 1 } : {}}
+          transition={{ delay: 1.4, duration: 1 }}
+          className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2">
+          <span className="text-[10px] tracking-widest uppercase text-white/25">Scroll</span>
+          <motion.div animate={{ y: [0, 10, 0] }} transition={{ repeat: Infinity, duration: 1.6, ease: 'easeInOut' }}
+            className="w-px h-10 rounded-full" style={{ background: 'linear-gradient(to bottom, #C9A84C, transparent)' }} />
         </motion.div>
       </section>
 
-      {/* MARQUEE */}
-      <Marquee items={marqueeItems} />
+      {/* ── MARQUEE ── */}
+      <div className="overflow-hidden py-5 border-y" style={{ borderColor: 'rgba(255,255,255,0.06)', background: '#0D0D0D' }}>
+        <motion.div animate={{ x: ['0%', '-50%'] }} transition={{ duration: 20, ease: 'linear', repeat: Infinity }}
+          style={{ display: 'flex', gap: '3rem', whiteSpace: 'nowrap' }}>
+          {[...Array(2)].map((_, ri) =>
+            ['Афиша', 'Пост', 'Буклет', 'Грамота', 'Баннер', 'Сертификат', 'Дизайн қызметтері', 'WhatsApp автоматизация'].map((item, i) => (
+              <span key={`${ri}-${i}`} className="text-xs font-semibold tracking-widest uppercase flex items-center gap-3"
+                style={{ color: '#C9A84C' }}>
+                {item} <span style={{ color: 'rgba(201,168,76,0.3)' }}>✦</span>
+              </span>
+            ))
+          )}
+        </motion.div>
+      </div>
 
-      {/* HOW IT WORKS */}
-      <section className="py-16 md:py-32 px-6 max-w-6xl mx-auto">
-        <FadeCard>
-          <div className="text-center mb-12 md:mb-20">
-            <span className="text-xs font-semibold tracking-widest uppercase text-[#C9A84C] mb-4 block">Жүйе қалай жұмыс істейді</span>
-            <h2 className="text-4xl md:text-7xl font-bold font-playfair text-[#1A1A1A] leading-tight">
-              3 қадам
-            </h2>
-          </div>
-        </FadeCard>
+      {/* ── STATEMENT SECTION ── */}
+      <section className="py-24 md:py-40 px-6 max-w-6xl mx-auto">
+        <StatText delay={0}>Мұғалім WhatsApp-қа</StatText>
+        <StatText delay={0.05}>хабар жазады — бот</StatText>
+        <div className="overflow-hidden">
+          <motion.div initial={{ y: '100%' }} whileInView={{ y: 0 }} viewport={{ once: true }}
+            transition={{ delay: 0.1, duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
+            className="flex items-baseline gap-4 flex-wrap">
+            <span className="text-[clamp(2.5rem,7vw,5.5rem)] font-bold font-playfair leading-tight text-white/10">сілтеме</span>
+            <span className="text-[clamp(2.5rem,7vw,5.5rem)] font-bold font-playfair leading-tight gold-shimmer">жібереді</span>
+          </motion.div>
+        </div>
+        <StatText delay={0.1}>форма — дизайнер — нәтиже</StatText>
+      </section>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {[
-            {
-              num: '01',
-              title: 'WhatsApp',
-              desc: 'Мұғалім ботқа хабарлама жазады. Бот адамша сөйлесіп, автоматты сілтеме жібереді.',
-              icon: '💬',
-            },
-            {
-              num: '02',
-              title: 'Форма',
-              desc: 'Сілтемені ашып, аты-жөні, кабинет, не керек екенін толтырады. 2 минут.',
-              icon: '📋',
-            },
-            {
-              num: '03',
-              title: 'Нәтиже',
-              desc: 'Дизайнер орындайды. Статус жаңарады. Директорға отчет автоматты дайын.',
-              icon: '✨',
-            },
-          ].map((step, i) => (
-            <FadeCard key={step.num} delay={i * 0.15}>
-              <div className="group p-8 rounded-2xl border border-[#E8E0D0] bg-white hover:border-[#C9A84C] transition-all duration-500 hover:shadow-xl hover:-translate-y-2 cursor-default h-full">
-                <div className="flex items-start justify-between mb-6">
-                  <span className="text-5xl font-bold font-playfair" style={{ color: 'rgba(201,168,76,0.2)' }}>{step.num}</span>
-                  <span className="text-3xl">{step.icon}</span>
-                </div>
-                <h3 className="text-2xl font-bold font-playfair text-[#1A1A1A] mb-3">{step.title}</h3>
-                <p className="text-[#6B6B6B] leading-relaxed">{step.desc}</p>
-                <div className="mt-6 h-0.5 w-0 group-hover:w-full transition-all duration-500" style={{ background: 'linear-gradient(90deg, #C9A84C, transparent)' }} />
-              </div>
-            </FadeCard>
+      {/* ── SERVICES GRID ── */}
+      <section ref={servRef} className="px-4 md:px-10 pb-24 md:pb-40">
+        <div className="max-w-6xl mx-auto mb-12 flex items-end justify-between">
+          <motion.h2 initial={{ opacity: 0, y: 40 }} animate={isServInView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.8 }}
+            className="text-3xl md:text-5xl font-bold font-playfair text-white">
+            Дизайн<br /><span className="gold-shimmer">Қызметтері</span>
+          </motion.h2>
+          <motion.div initial={{ opacity: 0 }} animate={isServInView ? { opacity: 1 } : {}} transition={{ delay: 0.3 }}>
+            <Link href="/services" className="text-sm text-white/40 hover:text-[#C9A84C] transition-colors">
+              Барлығын көру →
+            </Link>
+          </motion.div>
+        </div>
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4 max-w-6xl mx-auto">
+          {SERVICES.map((s, i) => (
+            <ServiceCard key={s.title} s={s} i={i} isInView={isServInView} />
           ))}
         </div>
       </section>
 
-      {/* BIG STATS */}
-      <section className="py-16 md:py-24 px-6" style={{ background: 'linear-gradient(135deg, #1A1A1A 0%, #2D2D2D 100%)' }}>
-        <div className="max-w-6xl mx-auto">
-          <FadeCard>
-            <div className="text-center mb-10 md:mb-16">
-              <h2 className="text-3xl md:text-6xl font-bold font-playfair text-white">
-                Нәтижелер <span className="gold-shimmer">сөйлейді</span>
-              </h2>
-            </div>
-          </FadeCard>
-          <div className="grid grid-cols-3 gap-3 md:gap-1">
-            {[
-              { value: '100%', label: 'Цифрлық процесс' },
-              { value: '1-2h', label: 'Жедел орындау' },
-              { value: '24/7', label: 'Өтініш қабылдау' },
-            ].map((stat, i) => (
-              <FadeCard key={stat.label} delay={i * 0.15}>
-                <div className="text-center py-8 md:py-12 px-2 md:px-6 border border-white/10 rounded-2xl hover:border-[#C9A84C]/40 transition-colors">
-                  <div className="text-3xl md:text-8xl font-bold font-playfair mb-2 md:mb-3" style={{ color: '#C9A84C' }}>{stat.value}</div>
-                  <div className="text-white/60 text-xs md:text-sm tracking-widest uppercase">{stat.label}</div>
-                </div>
-              </FadeCard>
-            ))}
-          </div>
+      {/* ── DARK STATS ── */}
+      <section className="py-20 md:py-32 px-6" style={{ background: '#060606', borderTop: '1px solid rgba(255,255,255,0.04)' }}>
+        <div className="max-w-6xl mx-auto grid grid-cols-3 gap-4">
+          {[{ v: '100%', l: 'Цифрлық' }, { v: '1-2h', l: 'Жедел' }, { v: '24/7', l: 'Қолжетімді' }].map((s, i) => (
+            <motion.div key={s.l} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }} transition={{ delay: i * 0.1, duration: 0.7 }}
+              className="text-center py-8 md:py-12 rounded-2xl" style={{ border: '1px solid rgba(255,255,255,0.05)' }}>
+              <div className="text-3xl md:text-7xl font-bold font-playfair mb-2" style={{ color: '#C9A84C' }}>{s.v}</div>
+              <div className="text-xs md:text-sm tracking-widest uppercase text-white/25">{s.l}</div>
+            </motion.div>
+          ))}
         </div>
       </section>
 
-      {/* FEATURES */}
-      <section className="py-16 md:py-32 px-6 max-w-6xl mx-auto">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-center">
-          <FadeCard>
-            <span className="text-xs font-semibold tracking-widest uppercase text-[#C9A84C] mb-4 block">Артықшылықтары</span>
-            <h2 className="text-3xl md:text-5xl font-bold font-playfair text-[#1A1A1A] leading-tight mb-6">
-              Неге дәл<br /><span className="gold-shimmer">Auzhan.ktl?</span>
-            </h2>
-            <p className="text-[#6B6B6B] leading-relaxed text-lg">
-              Қағаз жұмысы жоқ. Ұмытып кету жоқ. Барлығы бір жерде — ашық, жылдам, элитный.
-            </p>
-          </FadeCard>
-          <div className="space-y-4">
-            {[
-              { title: 'WhatsApp интеграция', desc: 'Бот автоматты жауап берып сілтеме жібереді' },
-              { title: 'Элитный дизайн', desc: 'Кәсіби, заманауи, директорға тапсыруға дайын' },
-              { title: 'Нақты уақыт статусы', desc: 'Орындалды / орындалмады — лезде жаңарады' },
-              { title: 'Директорға отчет', desc: 'Бір кнопкамен баспа шығару функциясы' },
-            ].map((f, i) => (
-              <FadeCard key={f.title} delay={i * 0.1}>
-                <div className="flex items-start gap-4 p-5 rounded-xl border border-[#E8E0D0] bg-white hover:border-[#C9A84C] hover:shadow-lg transition-all duration-300 group">
-                  <div className="w-10 h-10 rounded-full flex-shrink-0 flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #C9A84C, #A07830)' }}>
-                    <span className="text-white text-sm font-bold">0{i + 1}</span>
-                  </div>
-                  <div>
-                    <div className="font-semibold text-[#1A1A1A] mb-1 group-hover:text-[#C9A84C] transition-colors">{f.title}</div>
-                    <div className="text-sm text-[#6B6B6B]">{f.desc}</div>
-                  </div>
-                </div>
-              </FadeCard>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* CTA */}
-      <section className="py-16 md:py-32 px-6">
-        <FadeCard>
-          <div className="max-w-3xl mx-auto text-center rounded-3xl p-8 md:p-16 relative overflow-hidden" style={{ background: 'linear-gradient(135deg, #1A1A1A, #2D2D2D)' }}>
-            <div className="absolute inset-0" style={{ background: 'radial-gradient(circle at 50% 50%, rgba(201,168,76,0.15) 0%, transparent 70%)' }} />
-            <div className="relative z-10">
-              <h2 className="text-3xl md:text-6xl font-bold font-playfair text-white mb-4 md:mb-6 leading-tight">
-                Бастауға<br /><span className="gold-shimmer">дайынсыз ба?</span>
-              </h2>
-              <p className="text-white/60 text-base md:text-lg mb-8 md:mb-10">Мектебіңіздің жұмысын автоматтандыруды бүгін бастаңыз</p>
-              <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
-                <Link href="/admin" className="w-full sm:w-auto px-8 md:px-10 py-4 rounded-full text-[#1A1A1A] font-bold text-sm tracking-wide transition-all hover:shadow-2xl hover:scale-105 text-center" style={{ background: 'linear-gradient(135deg, #C9A84C, #E8D5A3)' }}>
-                  Админ панель →
-                </Link>
-                <Link href="/executor" className="w-full sm:w-auto px-8 md:px-10 py-4 rounded-full text-white font-semibold text-sm tracking-wide border border-white/20 hover:border-[#C9A84C] transition-all text-center">
-                  Орындаушы
-                </Link>
+      {/* ── HOW IT WORKS ── */}
+      <section className="py-24 md:py-40 px-6 max-w-6xl mx-auto">
+        <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+          className="text-center mb-16 md:mb-24">
+          <span className="text-xs tracking-widest uppercase mb-4 block" style={{ color: '#C9A84C' }}>Жүйе қалай жұмыс істейді</span>
+          <h2 className="text-4xl md:text-6xl font-bold font-playfair text-white">3 қадам</h2>
+        </motion.div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {[
+            { n: '01', title: 'WhatsApp', desc: 'Ботқа хабар жазасыз — бот автоматты сілтеме жібереді', icon: '💬' },
+            { n: '02', title: 'Форма', desc: 'Сілтемені ашып, не керек екенін толтырасыз. 2 минут', icon: '📋' },
+            { n: '03', title: 'Нәтиже', desc: 'Дизайнер орындайды. Директорға отчет автоматты дайын', icon: '✨' },
+          ].map((step, i) => (
+            <motion.div key={step.n} initial={{ opacity: 0, y: 50 }} whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }} transition={{ delay: i * 0.15, duration: 0.7 }}
+              className="group p-6 md:p-8 rounded-2xl relative overflow-hidden"
+              style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}>
+              <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+                style={{ background: 'radial-gradient(circle at 50% 0%, rgba(201,168,76,0.06) 0%, transparent 70%)' }} />
+              <div className="flex items-start justify-between mb-6">
+                <span className="text-4xl font-bold font-playfair" style={{ color: 'rgba(201,168,76,0.15)' }}>{step.n}</span>
+                <span className="text-2xl">{step.icon}</span>
               </div>
-            </div>
-          </div>
-        </FadeCard>
+              <h3 className="text-xl md:text-2xl font-bold font-playfair text-white mb-3">{step.title}</h3>
+              <p className="text-white/40 leading-relaxed text-sm">{step.desc}</p>
+              <div className="mt-6 h-px w-0 group-hover:w-full transition-all duration-500"
+                style={{ background: 'linear-gradient(90deg, #C9A84C, transparent)' }} />
+            </motion.div>
+          ))}
+        </div>
       </section>
 
-      {/* FOOTER */}
-      <footer className="py-10 px-8 border-t border-[#E8E0D0] flex flex-col md:flex-row items-center justify-between gap-4">
-        <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-full flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #C9A84C, #A07830)' }}>
-            <span className="text-white font-bold text-sm font-playfair">A</span>
+      {/* ── CTA ── */}
+      <section className="px-4 md:px-6 pb-24 md:pb-40">
+        <motion.div initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+          transition={{ duration: 0.8 }}
+          className="max-w-4xl mx-auto rounded-3xl p-10 md:p-20 text-center relative overflow-hidden"
+          style={{ background: 'linear-gradient(135deg, #111, #1a1a1a)', border: '1px solid rgba(255,255,255,0.06)' }}>
+          <div className="absolute inset-0" style={{ background: 'radial-gradient(circle at 50% 50%, rgba(201,168,76,0.1) 0%, transparent 65%)' }} />
+          <div className="relative z-10">
+            <h2 className="text-3xl md:text-6xl font-bold font-playfair text-white mb-6 leading-tight">
+              Бастауға<br /><span className="gold-shimmer">дайынсыз ба?</span>
+            </h2>
+            <p className="text-white/40 text-base md:text-lg mb-10">Тапсырысыңызды бүгін жіберіңіз</p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Link href="/services"
+                className="px-10 py-4 rounded-full font-bold text-sm text-[#0A0A0A] transition-all hover:scale-105 hover:shadow-2xl"
+                style={{ background: 'linear-gradient(135deg, #C9A84C, #E8D5A3)' }}>
+                Тапсырыс беру →
+              </Link>
+              <Link href="/form"
+                className="px-10 py-4 rounded-full font-semibold text-sm text-white/60 hover:text-white transition-colors"
+                style={{ border: '1px solid rgba(255,255,255,0.1)' }}>
+                Тікелей форма
+              </Link>
+            </div>
           </div>
-          <span className="font-bold font-playfair text-[#1A1A1A]">Auzhan<span className="text-[#C9A84C]">_ktl</span><span className="text-[#6B6B6B] font-normal">.Designer</span></span>
-        </div>
-        <p className="text-sm text-[#6B6B6B]">© 2024 Auzhan_ktl.Designer</p>
+        </motion.div>
+      </section>
+
+      {/* ── FOOTER ── */}
+      <footer className="py-8 px-6 md:px-10 flex flex-col md:flex-row items-center justify-between gap-4"
+        style={{ borderTop: '1px solid rgba(255,255,255,0.05)' }}>
+        <span className="font-bold font-playfair text-white text-sm">
+          Auzhan<span style={{ color: '#C9A84C' }}>_ktl</span><span className="text-white/30 font-normal">.Designer</span>
+        </span>
+        <p className="text-xs text-white/20">© 2024 Auzhan_ktl.Designer</p>
         <div className="flex gap-6">
-          <Link href="/admin" className="text-sm text-[#6B6B6B] hover:text-[#C9A84C] transition-colors">Админ</Link>
-          <Link href="/executor" className="text-sm text-[#6B6B6B] hover:text-[#C9A84C] transition-colors">Орындаушы</Link>
+          <Link href="/services" className="text-xs text-white/30 hover:text-[#C9A84C] transition-colors">Қызметтер</Link>
+          <Link href="/form" className="text-xs text-white/30 hover:text-[#C9A84C] transition-colors">Тапсырыс</Link>
         </div>
       </footer>
     </div>
+  )
+}
+
+function StatText({ children, delay }: { children: React.ReactNode; delay: number }) {
+  return (
+    <div className="overflow-hidden">
+      <motion.div initial={{ y: '100%' }} whileInView={{ y: 0 }} viewport={{ once: true }}
+        transition={{ delay, duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
+        className="text-[clamp(2.5rem,7vw,5.5rem)] font-bold font-playfair leading-tight text-white/10">
+        {children}
+      </motion.div>
+    </div>
+  )
+}
+
+function ServiceCard({ s, i, isInView }: { s: typeof SERVICES[0]; i: number; isInView: boolean }) {
+  return (
+    <motion.div initial={{ opacity: 0, y: 40 }} animate={isInView ? { opacity: 1, y: 0 } : {}}
+      transition={{ delay: i * 0.07, duration: 0.7, ease: [0.16, 1, 0.3, 1] }}>
+      <Link href={`/services`}
+        className={`group block rounded-2xl p-5 md:p-7 h-full bg-gradient-to-br ${s.color} relative overflow-hidden border border-white/5 hover:border-[#C9A84C]/30 transition-all duration-500 hover:-translate-y-1 hover:shadow-2xl`}>
+        <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+          style={{ background: 'radial-gradient(circle at 50% 0%, rgba(201,168,76,0.08) 0%, transparent 70%)' }} />
+        <span className="text-2xl md:text-3xl mb-4 block">{s.icon}</span>
+        <h3 className="text-lg md:text-xl font-bold font-playfair text-white mb-1 group-hover:text-[#C9A84C] transition-colors">{s.title}</h3>
+        <p className="text-xs text-white/30 tracking-wider uppercase">{s.sub}</p>
+        <div className="mt-5 h-px w-0 group-hover:w-full transition-all duration-500"
+          style={{ background: 'linear-gradient(90deg, #C9A84C, transparent)' }} />
+      </Link>
+    </motion.div>
   )
 }
