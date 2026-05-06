@@ -57,7 +57,7 @@ export async function POST(request: Request) {
     // New flow: create a fresh request
     const newToken = randomUUID()
     const created = await prisma.request.create({
-      data: { token: newToken, ...formData },
+      data: { token: newToken, whatsappPhone: '', ...formData },
     })
     return Response.json(created)
   }
